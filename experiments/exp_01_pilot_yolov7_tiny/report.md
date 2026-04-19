@@ -33,13 +33,14 @@ This experiment was conducted using an optimized version of the combined **D-Fir
 * **Epochs:** `50` | **Batch Size:** `16` | **Resolution:** `640x640`
 * **Optimizer:** `SGD` | **Learning Rate (lr0):** `0.01`
 
-**Execution Command:**
-```bash
-python train.py --workers 2 --device 0 --batch-size 16 --data "data.yaml" --img 640 640 --cfg cfg/training/yolov7-tiny.yaml --weights yolov7-tiny.pt --name exp_01_pilot --hyp data/hyp.scratch.tiny.yaml --epochs 50
-
 ## 📈 4. Performance Summary (mAP@.5)
 Class | mAP@.5 Score | Evaluation
 🎯 Overall |45.8% | Solid baseline for 50 epochs
 💨 Smoke | 60.4% | Good feature extraction
 🔥 Fire |31.2% | Weak (Due to class imbalance)
+
+**Execution Command:**
+```bash
+python train.py --workers 2 --device 0 --batch-size 16 --data "data.yaml" --img 640 640 --cfg cfg/training/yolov7-tiny.yaml --weights yolov7-tiny.pt --name exp_01_pilot --hyp data/hyp.scratch.tiny.yaml --epochs 50
+
 
