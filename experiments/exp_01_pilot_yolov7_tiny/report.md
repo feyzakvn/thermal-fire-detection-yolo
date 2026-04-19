@@ -34,10 +34,10 @@ This experiment was conducted using an optimized version of the combined **D-Fir
 * **Optimizer:** `SGD` | **Learning Rate (lr0):** `0.01`
 
 ## 📈 4. Performance Summary (mAP@.5)
-Class | mAP@.5 Score | Evaluation
-🎯 Overall |45.8% | Solid baseline for 50 epochs
-💨 Smoke | 60.4% | Good feature extraction
-🔥 Fire |31.2% | Weak (Due to class imbalance)
+* Class | mAP@.5 Score | Evaluation
+* 🎯 Overall |45.8% | Solid baseline for 50 epochs
+* 💨 Smoke | 60.4% | Good feature extraction
+* 🔥 Fire |31.2% | Weak (Due to class imbalance)
 
 **Execution Command:**
 ```bash
