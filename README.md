@@ -1,10 +1,10 @@
 # 🔥 B4: Termal/RGB Yangın Tespiti: YOLOv7-Tiny + Video İyileştirme Pipeline
 
-Bu depo, uç cihazlarda (edge devices - örn. Jetson Nano) çalışmak üzere optimize edilmiş, görüntü işleme ve derin öğrenme tabanlı bir erken uyarı orman yangını tespit sisteminin geliştirilme sürecini, deneylerini ve kaynak kodlarını barındırmaktadır. 
-
 **Geliştirici:** Dudu Feyza Kavun  
 **Danışman:** Dr. Yunus Emre ÇOĞURCU  
 **Kurum:** Çukurova Üniversitesi, Bilgisayar Mühendisliği Bölümü
+
+Bu depo, uç cihazlarda (edge devices - örn. Jetson Nano) çalışmak üzere optimize edilmiş, görüntü işleme ve derin öğrenme tabanlı bir erken uyarı orman yangını tespit sisteminin geliştirilme sürecini, deneylerini ve kaynak kodlarını barındırmaktadır. 
 
 ## 🎯 Proje Amacı
 Orman yangınlarına en kısa sürede müdahale edilebilmesi için, termal ve RGB kamera akışlarını gerçek zamanlı analiz ederek alev ve duman tespiti yapan yüksek doğruluklu bir sistem geliştirmek. Proje, hesaplama gücü kısıtlı cihazlarda maksimum doğruluk (mAP) ve hız (FPS) dengesini sağlamak amacıyla YOLOv7-Tiny ve YOLOv8-Nano gibi hafif mimarilerin karşılaştırmalı analizini içerir.
