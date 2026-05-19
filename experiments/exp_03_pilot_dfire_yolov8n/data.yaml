@@ -1,0 +1,6 @@
+train: C:/Users/dfeyz/Desktop/D_Fire_YOLO_Dataset/train/images
+val: C:/Users/dfeyz/Desktop/D_Fire_YOLO_Dataset/valid/images
+test: C:/Users/dfeyz/Desktop/D_Fire_YOLO_Dataset/test/images
+
+nc: 2
+names: ['fire', 'smoke']
