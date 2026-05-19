@@ -13,52 +13,52 @@ Orman yangınlarına en kısa sürede müdahale edilebilmesi için, termal ve RG
 
 ## 🗺️ Proje Yol Haritası (Roadmap)
 
-- [x] **Adım 1:** Termal/RGB yangın veri setleri araştırması (FLAME, D-Fire vb.) ve birleştirilmesi.
-- [x] **Adım 2:** Veri setinin temizlenmesi (P-Hash ile kopya silme) ve YOLO formatında etiketlenmesi.
-- [ ] **Adım 3:** Video iyileştirme modülü: CLAHE, histogram eşitleme.
-- [ ] **Adım 4:** Ufuk çizgisi tespiti: Gökyüzü maskeleme (Canny + Hough).
-- [x] **Adım 5:** YOLOv7-Tiny Pilot Eğitimi (Baseline oluşturma).
-- [x] **Adım 6:** YOLOv8-Nano ile karşılaştırmalı eğitim (Hız vs. Doğruluk).
-- [ ] **Adım 7:** Veri Çoğaltma (Data Augmentation) ile Sınıf Dengesizliğinin (Class Imbalance) çözülmesi.
-- [ ] **Adım 8:** ONNX dönüşümü + TensorRT optimizasyonu.
+- [x] **Adım 1:** Veri seti araştırması ve D-Fire setinin projeye izole edilmesi.
+- [x] **Adım 2:** Veri setinin YOLO formatında etiketlenmesi (`0=fire, 1=smoke`).
+- [x] **Adım 3:** Pipeline hatalarının (veri sızıntısı, yanlış sınıf silinmesi) giderilip sızıntısız (seed) dağılım yapılması.
+- [x] **Adım 4:** YOLOv7-Tiny ve YOLOv8-Nano ilk pilot eğitimleri (Eski/Kusurlu Altyapı).
+- [x] **Adım 5:** Geçerli ve Saf D-Fire Baseline modelinin oluşturulması (Güncel %76.3 mAP başarısı).
+- [ ] **Adım 6:** Video iyileştirme modülü: RGB LAB-Space CLAHE entegrasyonu.
+- [ ] **Adım 7:** Ufuk çizgisi tespiti: Gökyüzü maskeleme (Canny + Hough).
+- [ ] **Adım 8:** ONNX dönüşümü + TensorRT optimizasyonu (Jetson donanımı için).
 - [ ] **Adım 9:** `fire_detector_node` entegrasyonu (İyileştirme → Maskeleme → Çıkarım).
 - [ ] **Adım 10:** Farklı senaryolarda saha testleri ve final model kartı oluşturulması.
 
 ---
 
-## 📊 Veri Seti Optimizasyonu
-Aşırı uyumu (overfitting) engellemek için ~24.000 ham görsel üzerinde Algısal Parmak İzi (Perceptual Hashing) uygulanmış ve birbirine %95'ten fazla benzeyen **8.531 kopya görsel** silinmiştir. 
+## 📊 Veri Seti Yapılandırması (Geçerli Baseline)
+Önceki aşamalarda tespit edilen çift etiketli (Fire+Smoke) verilerin yanlışlıkla silinmesi ve veri sızıntısı (data leakage) sorunları `master_splitter.py` üzerinde giderilmiş ve `random.seed(42)` ile deterministik bir dağılım yapılmıştır. "Normal" sınıfı tamamen kaldırılmış, bunun yerine boş etiketli negatif örnekler (background) kullanılmıştır.
 
-**Nihai Veri Seti (8.758 Görsel):**
-* ☁️ **Normal (Bulut/Arka Plan):** `3.900` (Yanlış alarmları önlemek için)
-* 💨 **Smoke (Duman):** `3.638` (Erken uyarı tespiti için)
-* 🔥 **Fire (Alev):** `1.220` *(Sentetik çoğaltma aşaması bekleniyor)*
+**Nihai D-Fire Veri Dağılımı (Toplam 20.325 Görsel):**
+* 🔥 **Sadece Alev (Fire):** `1.168`
+* 💨 **Sadece Duman (Smoke):** `4.666`
+* 🌋 **Hem Alev Hem Duman:** `4.653`
+* ☁️ **Arka Plan (Negatif Örnek):** `9.838` (Bulut ve gökyüzündeki yanlış alarmları önlemek için)
+
+*(Dağılım: %80 Train, %10 Valid, %10 Test)*
 
 ---
 
 ## 🧪 Deneyler ve Performans Analizi (Experiments)
-Donanım kısıtlamaları (NVIDIA GTX 1050 - 3GB VRAM) göz önüne alınarak, aynı veri seti ve hiperparametrelerle (50 Epoch, 640x640 Çözünürlük, Batch: 16) iki farklı pilot eğitim gerçekleştirilmiştir. 
+Donanım kısıtlamaları (NVIDIA GTX 1050 - 3GB VRAM) göz önüne alınarak gerçekleştirilen eğitimlerde (50 Epoch, 640x640 Çözünürlük, Batch: 16), veri seti mantık hatasının giderilmesiyle muazzam bir performans sıçraması elde edilmiştir.
 
-| Değerlendirme Metriği | 📉 Exp 01: YOLOv7-Tiny | 🚀 Exp 02: YOLOv8-Nano | Gelişim & Notlar |
+| Değerlendirme Metriği | 📉 Eski/Kusurlu Pipeline (v8) | 🚀 Geçerli D-Fire Baseline (v8) | Gelişim & Notlar |
 | :--- | :---: | :---: | :--- |
-| **Model Parametresi** | ~6.0 Milyon | **3.01 Milyon** | YOLOv8 %50 daha hafif. |
-| **VRAM Tüketimi** | ~2.58 GB | **2.15 GB** | YOLOv8 daha verimli. |
-| **Genel mAP@.5** | %45.8 | **~%68.5** | **+%22.7 Doğruluk Artışı** |
-| **Duman mAP@.5** | %60.4 | **~%75.0** | C2f blokları ile daha iyi özellik çıkarımı. |
-| **Alev mAP@.5** | %31.2 | **~%42.0** | Veri azlığı nedeniyle darboğaz yaşanıyor. |
+| **Genel mAP@.5** | %68.5 | **%76.3** | **+%7.8 Net Artış** |
+| **Alev (Fire) mAP@.5** | %42.0 | **%69.4** | Kayıp verilerin kurtarılmasıyla **+%27.4** sıçrama. |
+| **Duman (Smoke) mAP@.5** | %75.0 | **%83.2** | Güçlü özellik çıkarımı ile stabil başarı. |
+| **Çıkarım Hızı (Inference)** | - | **9.3 ms / Görüntü** | Jetson/Edge cihazlar için Gerçek Zamanlı (Real-Time) uyumlu. |
 
-### 🔍 Canlı Test Çıkarımları (Inference Analysis)
-1. **Bulut/Yanlış Alarm Testleri:** YOLOv7-Tiny bulutları kusursuz şekilde arka plan olarak ayırırken, daha agresif çalışan YOLOv8-Nano düşük güven eşiklerinde yoğun bulutlarda yanlış alarm (False Positive) üretme eğilimindedir. (Eşik optimizasyonu gerektirir).
-2. **Düşük Kaliteli Medya:** Bulanık veya kontrastı düşük karanlık görsellerde her iki model de dumanı/alevi kaçırmaktadır. (Görüntü ön işleme gerektirir).
-3. **Sınıf Dengesizliği (Class Imbalance):** `Fire` sınıfının yalnızca 1.220 görsel barındırması sebebiyle, Karmaşıklık Matrisine (Confusion Matrix) göre birçok gerçek alev görseli arka plan sanılarak kaçırılmaktadır. 
+### 🔍 Analiz ve Gözlemler
+Veri setindeki "hem alev hem duman" içeren 4.653 kritik görselin sisteme geri kazandırılmasıyla modelin alev karakteristiğini öğrenme yeteneği büyük ölçüde artmıştır. Alev başarı oranının %42'den %69.4'e fırlaması, önceki darboğazın veri azlığından değil, hatalı filtreleme mantığından kaynaklandığını kanıtlamıştır.
 
 ---
 
 ## 🚀 Gelecek Adımlar (Next Steps)
-Mevcut deneylerin analizlerine dayanarak sistem şu adımlarla iyileştirilecektir:
-1. **CLAHE Algoritması Entegrasyonu:** Karanlık ve düşük kontrastlı videoların model çıkarımından (inference) önce netleştirilmesi.
-2. **Data Augmentation:** "Fire" sınıfındaki görsellerin döndürme, bulanıklaştırma ve parlaklık oyunlarıyla sentetik olarak 3.000 seviyelerine çıkarılarak veri setinin dengelenmesi.
-3. **Hyperparameter Tuning:** YOLOv8 için optimum güven eşiği (Confidence Threshold) ayarlarının yapılandırılması.
+Geçerli ve sızıntısız baseline referans noktamız oluşturulduğuna göre sistem doğrudan dış ortam zorluklarını aşmaya odaklanacaktır:
+1. **CLAHE Algoritması Entegrasyonu:** Karanlık, sisli veya düşük kontrastlı videoların, alev renkleri bozulmadan (LAB renk uzayında) model çıkarımından önce netleştirilmesi.
+2. **Gökyüzü Maskeleme:** Yoğun beyaz bulutların yanlış alarm (False Positive) üretmesini engellemek için ufuk çizgisinin üstünün maskelenmesi.
+3. **TensorRT Optimizasyonu:** Uç cihazlarda (Jetson) çalışabilmesi için PyTorch ağırlıklarının ONNX ve TensorRT motoruna (.engine) dönüştürülmesi.
 
 ---
-*Bu depo, akademik amaçlı bir lisans bitirme projesi günlüğü olarak sürdürülmektedir.*
+*Bu depo, Çukurova Üniversitesi akademik lisans bitirme projesi günlüğü olarak sürdürülmektedir.*
