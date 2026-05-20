@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 2
+names: ['fire', 'smoke']
+
+roboflow:
+  workspace: deep-learning-project-ibnid
+  project: forest-fire-03wi7
+  version: 5
+  license: Public Domain
+  url: https://universe.roboflow.com/deep-learning-project-ibnid/forest-fire-03wi7/dataset/5

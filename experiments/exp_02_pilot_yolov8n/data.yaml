@@ -1,0 +1,11 @@
+# YOLOv7 Eğitim Konfigürasyon Dosyası (Pilot Eğitim)
+
+train: C:/Users/dfeyz/Desktop/B4_YOLO_Dataset/train/images
+val: C:/Users/dfeyz/Desktop/B4_YOLO_Dataset/valid/images
+test: C:/Users/dfeyz/Desktop/B4_YOLO_Dataset/test/images
+
+# Sınıf Sayısı
+nc: 3
+
+# Sınıf İsimleri (ID sırasına göre: 0, 1, 2)
+names: ['Fire', 'Smoke', 'Normal']
