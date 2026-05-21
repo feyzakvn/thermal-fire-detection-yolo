@@ -33,4 +33,4 @@ The original ROS2 sensor fusion pipeline and edge hardware topology were develop
 The `decision_node.py` script provided in this directory is a modified version of her original work, specifically adapted during our joint laboratory tests to instantly capture empirical thermal evidence (`CRITICAL.png` snapshots) upon threat detection. 
 
 For the complete Jetson Orin Nano hardware pipeline, please visit her original repository: 
-🔗 **[Gizem's Edge AI Pipeline Repository](https://github.com/gizem_kullanici_adi/repo_adi)**
+🔗 **[Gizem's Edge AI Pipeline Repository](https://github.com/gizemezer/jetson-edge-ai-pipeline)**
