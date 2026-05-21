@@ -1,7 +1,7 @@
 # 🔥 B4: Termal/RGB Yangın Tespiti: YOLOv7-Tiny + Video İyileştirme Pipeline
 
-**Geliştirici:** Dudu Feyza Kavun  
-**Danışman:** Dr. Yunus Emre ÇOĞURCU  
+**Geliştirici:** Dudu Feyza Kavun <br>
+**Danışman:** Dr. Yunus Emre ÇOĞURCU <br>
 **Kurum:** Çukurova Üniversitesi, Bilgisayar Mühendisliği Bölümü
 
 ## 🎯 Proje Amacı
