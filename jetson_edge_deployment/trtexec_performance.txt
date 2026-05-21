@@ -1,0 +1,14 @@
+[05/21/2026-17:57:34] [I] === Performance summary ===
+[05/21/2026-17:57:34] [I] Throughput: 264.311 qps
+[05/21/2026-17:57:34] [I] Latency: min = 3.97729 ms, max = 4.72278 ms, mean = 4.12363 ms, median = 4.05493 ms, percentile(90%) = 4.63361 ms, percentile(95%) = 4.64276 ms, percentile(99%) = 4.65732 ms
+[05/21/2026-17:57:34] [I] Enqueue Time: min = 2.51892 ms, max = 3.09415 ms, mean = 2.64001 ms, median = 2.59918 ms, percentile(90%) = 2.80463 ms, percentile(95%) = 2.86578 ms, percentile(99%) = 3.06454 ms
+[05/21/2026-17:57:34] [I] H2D Latency: min = 0.280029 ms, max = 0.487183 ms, mean = 0.325783 ms, median = 0.30957 ms, percentile(90%) = 0.43988 ms, percentile(95%) = 0.447235 ms, percentile(99%) = 0.455261 ms
+[05/21/2026-17:57:34] [I] GPU Compute Time: min = 3.65405 ms, max = 4.24976 ms, mean = 3.77518 ms, median = 3.72357 ms, percentile(90%) = 4.16412 ms, percentile(95%) = 4.16901 ms, percentile(99%) = 4.17471 ms
+[05/21/2026-17:57:34] [I] D2H Latency: min = 0.012207 ms, max = 0.040863 ms, mean = 0.0226694 ms, median = 0.0220947 ms, percentile(90%) = 0.0258789 ms, percentile(95%) = 0.0264282 ms, percentile(99%) = 0.0379028 ms
+[05/21/2026-17:57:34] [I] Total Host Walltime: 3.00783 s
+[05/21/2026-17:57:34] [I] Total GPU Compute Time: 3.00126 s
+[05/21/2026-17:57:34] [W] * GPU compute time is unstable, with coefficient of variance = 3.80247%.
+[05/21/2026-17:57:34] [W]   If not already in use, locking GPU clock frequency or adding --useSpinWait may improve the stability.
+[05/21/2026-17:57:34] [I] Explanations of the performance metrics are printed in the verbose logs.
+[05/21/2026-17:57:34] [I]
+&&&& PASSED TensorRT.trtexec [TensorRT v100300] # /usr/src/tensorrt/bin/trtexec --onnx=best.onnx --saveEngine=best.engine --fp16
