@@ -32,7 +32,7 @@ By fixing the logic bug in `master_splitter.py` that previously deleted dual-lab
 
 ---
 
-## 📈 3. Quantitative Evaluation 
+## 📈 3. Quantitative Evaluation
 
 ### 3.1. Training-Time Monitoring (Validation Set)
 *Used strictly for loss calculation and hyperparameter tuning during the training phase.*
@@ -41,20 +41,22 @@ By fixing the logic bug in `master_splitter.py` that previously deleted dual-lab
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
 | **All Classes** | 2,030 | 2,507 | 0.760 | 0.701 | **0.763** | 0.436 |
 | **Fire** | 581 | 1,464 | 0.706 | 0.625 | **0.694** | 0.366 |
-| **Smoke** | 931 | 1043 | 0.815 | 0.777 | **0.832** | 0.506 |
+| **Smoke** | 931 | 1,043 | 0.815 | 0.777 | **0.832** | 0.506 |
 
-### 3.2. Unseen Data Evaluation (Test Set)
+### 3.2. Unseen Data Evaluation (Official Test Set)
 *The true baseline performance evaluated on the strictly isolated test partition (`model.val(split='test')`).*
 
-| Target Class | Images | Instances | mAP@.5 | 
-| :--- | :---: | :---: | :---: | 
-| **All Classes** | 2,037 | 2,471 | **0.768** | 
+| Target Class | Images | Instances | Precision (P) | Recall (R) | mAP@.5 | mAP@.5-.95 |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **All Classes** | 2,037 | 2,471 | 0.763 | 0.705 | **0.768** | 0.443 |
+| **Fire** | 584 | 1,447 | 0.711 | 0.622 | **0.704** | 0.377 |
+| **Smoke** | 934 | 1,024 | 0.815 | 0.788 | **0.831** | 0.508 |
 
 ---
 
 ## 🧠 4. Core Engineering Insights
 
-1. **Fire Recall Boost:** Recovering the 4,653 mixed images fundamentally trained the bounding box regression network, lifting Fire mAP from the previous ~31% to a robust **69.4%** (Validation) and an overall dataset accuracy of **76.8%** (Test).
+1. **Fire Recall Boost:** Recovering the 4,653 mixed images fundamentally trained the bounding box regression network, lifting Fire mAP from the previous ~31% to a robust **70.4%** on the unseen test set, and establishing a solid overall dataset baseline of **76.8% mAP@.5**.
 2. **Edge Deployability & Hardware Profiling:** The model clocks **9.3 ms inference time per image** on the local training compute (NVIDIA GTX 1050). To validate real-world edge deployment, the model was compiled into a TensorRT engine (`best.engine`) and profiled on the target edge hardware.
 
 **Deployment Performance Comparison:**
