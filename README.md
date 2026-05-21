@@ -5,7 +5,7 @@
 **Kurum:** Çukurova Üniversitesi, Bilgisayar Mühendisliği Bölümü
 
 ## 🎯 Proje Amacı
-Orman yangınlarına en kısa sürede müdahale edilebilmesi için, termal ve RGB kamera akışlarını gerçek zamanlı analiz ederek alev ve duman tespiti yapan yüksek doğruluklu bir sistem geliştirmek. Proje, hesaplama gücü kısıtlı cihazlarda maksimum doğruluk (mAP) ve hız (FPS) dengesini sağlamak amacıyla YOLOv7-Tiny ve YOLOv8-Nano gibi hafif mimarilerin karşılaştırmalı analizini içerir.
+Orman yangınlarına en kısa sürede müdahale edilebilmesi için, termal ve RGB kamera akışlarını gerçek zamanlı analiz ederek alev ve duman tespiti yapan yüksek doğruluklu bir sistem geliştirmek. Proje, hesaplama gücü kısıtlı uç cihazlarda maksimum doğruluk (mAP) ve hız (FPS) dengesini sağlamak amacıyla YOLOv7-Tiny ve YOLOv8-Nano mimarilerinin pilot karşılaştırmalı analizini yapmış ve nihai olarak YOLOv8-Nano ile donanım dağıtımını gerçekleştirmiştir.
 
 ---
 
@@ -14,7 +14,7 @@ Orman yangınlarına en kısa sürede müdahale edilebilmesi için, termal ve RG
 - [x] **Adım 1:** Veri seti araştırması ve D-Fire setinin projeye izole edilmesi.
 - [x] **Adım 2:** Veri setinin YOLO formatında etiketlenmesi (`0=fire, 1=smoke`).
 - [x] **Adım 3:** Pipeline hatalarının giderilip sızıntısız (seed) dağılım yapılması.
-- [x] **Adım 4:** YOLOv7-Tiny ve YOLOv8-Nano ilk pilot eğitimleri (Eski/Kusurlu Altyapı).
+- [x] **Adım 4:** YOLOv7-Tiny ve YOLOv8-Nano ilk pilot eğitimleri ve karşılaştırmalı analizi (`exp01`, `exp02`).
 - [x] **Adım 5:** Geçerli ve Saf D-Fire Baseline modelinin oluşturulması (Gerçek Test Setinde **%76.8 mAP** başarısı).
 - [x] **Adım 6:** Video iyileştirme modülü: RGB LAB-Space CLAHE entegrasyonu.
 - [x] **Adım 7:** Ufuk çizgisi tespiti: Gökyüzü maskeleme (Canny + Hough).
@@ -38,7 +38,7 @@ Orman yangınlarına en kısa sürede müdahale edilebilmesi için, termal ve RG
 
 ---
 
-## 🧪 1. Deneyler ve Performans Analizi (Baseline Model)
+## 🧪 1. Deneyler ve Performans Analizi (YOLOv8n Baseline Model)
 Donanım kısıtlamaları (NVIDIA GTX 1050 - 3GB VRAM) göz önüne alınarak gerçekleştirilen eğitimlerde (50 Epoch, 640x640), modelin daha önce hiç görmediği **2037 adet bağımsız test görseli** üzerinde ulaşılan nihai baseline sonuçları aşağıdadır:
 
 | Değerlendirme Metriği | 📉 Eski/Kusurlu Pipeline | 🚀 Yeni Baseline (Gerçek Test Seti) | Gelişim & Notlar |
@@ -49,14 +49,14 @@ Donanım kısıtlamaları (NVIDIA GTX 1050 - 3GB VRAM) göz önüne alınarak ge
 | **Çıkarım Modu** | PyTorch (.pt) | **ONNX Runtime (GPU)** | Hibrit node üzerinden evrensel çıkarım desteği. |
 
 ### 🔍 Analiz ve Gözlemler
-Validation (Doğrulama) metrikleri yerine doğrudan **Test Seti** kullanılarak elde edilen bu sonuçlar, modelin dış ortam koşullarındaki gerçek genelleme yeteneğini yansıtmaktadır. Veri setindeki "hem alev hem duman" içeren 4.653 kritik görselin sisteme geri kazandırılmasıyla alev tespiti %42'den %70.4'e yükselmiştir.
+Validation (Doğrulama) metrikleri yerine doğrudan **Test Seti** kullanılarak elde edilen bu sonuçlar, modelin dış ortam koşulterindeki gerçek genelleme yeteneğini yansıtmaktadır. Veri setindeki "hem alev hem duman" içeren 4.653 kritik görselin sisteme geri kazandırılmasıyla alev tespiti %42'den %70.4'e yükselmiştir. İlk aşamalarda (`exp01` ve `exp02`) YOLOv7-Tiny ile yapılan pilot denemeler, YOLOv8-Nano'nun donanım optimizasyonu ve mAP dengesinde çok daha üstün olduğunu kanıtlamış; bu sebeple nihai dağıtım YOLOv8 üzerinden sürdürülmüştür.
 
 ---
 
 ## ⚡ 2. Uç Cihaz (Edge AI) Dağıtımı ve Sensör Füzyonu
 *Projenin canlı donanım testleri, TensorRT motorları ve log dosyaları `jetson_edge_deployment/` dizininde sunulmaktadır.*
 
-Geliştirilen modelin gerçek dünya koşullarında çalışabilirliğini kanıtlamak amacıyla, mimari **NVIDIA Jetson Orin Nano** uç cihazına entegre edilmiştir. Model, Jetson'ın Tensor Çekirdeklerini (Tensor Cores) kullanabilmesi için FP16 hassasiyetinde `.engine` formatına derlenmiştir.
+Geliştirilen modelin gerçek dünya koşullarında çalışabilirliğini kanıtlamak amacıyla, mimari **NVIDIA Jetson Orin Nano (JetPack 5.x)** uç cihazına entegre edilmiştir. Model, Jetson'ın Tensor Çekirdeklerini (Tensor Cores) kullanabilmesi için FP16 hassasiyetinde `.engine` formatına derlenmiştir.
 
 ### 🚀 Donanım Hızlandırma Karşılaştırması (GTX 1050 vs. Jetson Orin Nano)
 | Metrik | Geliştirme Ortamı (NVIDIA GTX 1050) | Üretim/Uç Cihaz Ortamı (Jetson Orin Nano) |
@@ -68,7 +68,7 @@ Geliştirilen modelin gerçek dünya koşullarında çalışabilirliğini kanıt
 | **İşlem Hacmi (Throughput)**| ~107.5 FPS | **264.31 FPS** |
 
 ### 🔥 Çoklu Sensör Füzyonu ve Canlı Saha Testi
-Sistem, yanlış alarmları (false-positive) tamamen önlemek için YOLOv8 görsel verisini, **Flir Lepton (Termal)** ve **Intel RealSense (Derinlik)** kameralarından gelen ham matrislerle ROS2 düğümleri üzerinden çapraz doğrulamaya tabi tutar.
+Sistem, yanlış alarmları (false-positive) tamamen önlemek için YOLOv8 görsel verisini, **UNI-T UTi721M Termal Kamera (USB)** ve **Intel RealSense D435 (USB 3.0)** kameralarından gelen ham matrislerle ROS2 düğümleri üzerinden çapraz doğrulamaya tabi tutar.
 
 Sistemin donanım üzerinde doğrulanması için laboratuvar ortamında kontrollü bir **Çakmak Alevi Testi** gerçekleştirilmiştir. `decision_node.py` içerisine eklenen asenkron kesme (interrupt) mantığı sayesinde sistem;
 1. Sıcaklığın **60°C'yi** (`THERMAL_DANGEROUS`) aştığını,
@@ -79,13 +79,19 @@ matematiksel olarak doğruladığı anlık saniyede aşağıdaki **CRITICAL (Kri
 
 ![Canlı Saha Testi - Termal Isı Haritası](jetson_edge_deployment/bitmap/bitmap_162105_CRITICAL.png)
 
-*(Orijinal ROS2 sensör füzyon altyapısı ve Edge AI topolojisi takım arkadaşım **Gizem** tarafından geliştirilmiş olup, bu repodaki `decision_node.py` dosyası anlık kanıt kaydetme mekanizması için modifiye edilmiştir.)*
+---
+
+## 🤝 Teşekkür & Referanslar (Credits)
+Orijinal ROS2 sensör füzyon altyapısı ve Edge AI donanım topolojisi takım arkadaşım **Gizem** tarafından geliştirilmiştir. Bu repodaki `jetson_edge_deployment/decision_node.py` dosyası, laboratuvar testlerimiz esnasında anlık kritik kanıt kaydetme mekanizmasının entegrasyonu için modifiye edilmiştir. 
+
+ROS2 donanım pipeline'ının tamamını incelemek için kendisinin orijinal reposunu ziyaret edebilirsiniz:
+🔗 **[Gizem's Edge AI Pipeline Repository](https://github.com/gizemezer/jetson-edge-ai-pipeline)**
 
 ---
 
 ## 🚀 Gelecek Adımlar (Next Steps)
-Projenin baseline referans noktası, uç cihaz donanım dağıtımı ve sensör füzyonu testleri başarıyla tamamlanmıştır:
-1. **Akademik Raporlama (Bitirme Tezi):** Jüri sunumu için "Abstract - Introduction - Methodology - Results - Discussions - Conclusions" formatında nihai tezin yazımına başlanması.
+Projenin yapay zeka araştırma, model eğitim, uç cihaz donanım dağıtımı ve sensör füzyonu saha testleri **başarıyla tamamlanmış ve sonuçlandırılmıştır.**
+* **Akademik Raporlama (Bitirme Tezi):** Projenin tek kalan adımı, jüri sunumu için *"Abstract - Introduction - Methodology - Results - Discussions - Conclusions"* formatında bitirme tezinin kaleme alınmasıdır.
 
 ---
-*Bu depo, Çukurova Üniversitesi akademik lisans bitirme projesi günlüğü olarak sürdürülmektedir.*
+*Bu depo, Çukurova Üniversitesi akademik lisans bitirme projesi dokümantasyonu olarak sunulmaktadır.*
