@@ -20,7 +20,7 @@ Orman yangınlarına en kısa sürede müdahale edilebilmesi için, termal ve RG
 - [x] **Adım 7:** Ufuk çizgisi tespiti: Gökyüzü maskeleme (Canny + Hough).
 - [x] **Adım 8:** Çıkarım motorları için ONNX dönüşümü (`best.onnx` entegrasyonu).
 - [x] **Adım 9:** `fire_detector_node` entegrasyonu (Hibrit PyTorch & ONNX Pipeline).
-- [x] **Adım 10:** Edge AI Uç Cihaz (Jetson Orin Nano) TensorRT derlemesi, Çoklu Sensör Füzyonu ve Canlı Saha Testleri.
+- [x] **Adım 10:** Edge AI Uç Cihaz (Jetson Orin Nano) TensorRT derlemesi, Çoklu Sensör Füzyonu ve Kontrollü Laboratuvar Testleri.
 - [ ] **Adım 11:** Nihai proje raporunun ve bitirme tezinin yazılması.
 
 ---
@@ -67,22 +67,24 @@ Geliştirilen modelin gerçek dünya koşullarında çalışabilirliğini kanıt
 | **Çıkarım (Inference) Süresi** | 9.30 ms | **3.72 ms (Medyan GPU Compute)** |
 | **İşlem Hacmi (Throughput)**| ~107.5 FPS | **264.31 FPS** |
 
-### 🔥 Çoklu Sensör Füzyonu ve Canlı Saha Testi
+### 🔥 Çoklu Sensör Füzyonu ve Kontrollü Laboratuvar Yanma Testi
 Sistem, yanlış alarmları (false-positive) tamamen önlemek için YOLOv8 görsel verisini, **UNI-T UTi721M Termal Kamera (USB)** ve **Intel RealSense D435 (USB 3.0)** kameralarından gelen ham matrislerle ROS2 düğümleri üzerinden çapraz doğrulamaya tabi tutar.
 
-Sistemin donanım üzerinde doğrulanması için laboratuvar ortamında kontrollü bir **Çakmak Alevi Testi** gerçekleştirilmiştir. `decision_node.py` içerisine eklenen asenkron kesme (interrupt) mantığı sayesinde sistem;
+Sistemin donanım üzerinde doğrulanması için **kontrollü laboratuvar yanma testi (controlled laboratory ignition test)** gerçekleştirilmiştir. `decision_node.py` içerisine eklenen asenkron kesme (interrupt) mantığı sayesinde sistem;
 1. Sıcaklığın **60°C'yi** (`THERMAL_DANGEROUS`) aştığını,
 2. Nesnenin **50mm-300mm** geçerli derinlik aralığında olduğunu,
 3. Gürültü olmadığını (>5 pixel kümelenme) 
 
 matematiksel olarak doğruladığı anlık saniyede aşağıdaki **CRITICAL (Kritik)** ısı haritası kanıtını kaydetmiştir:
 
-![Canlı Saha Testi - Termal Isı Haritası](jetson_edge_deployment/bitmap/bitmap_162105_CRITICAL.png)
+![Kontrollü Laboratuvar Yanma Testi - Termal Isı Haritası](jetson_edge_deployment/bitmap/bitmap_162105_CRITICAL.png)
 
 ---
 
 ## 🤝 Teşekkür & Referanslar (Credits)
 Orijinal ROS2 sensör füzyon altyapısı ve Edge AI donanım topolojisi takım arkadaşım **Gizem** tarafından geliştirilmiştir. Bu repodaki `jetson_edge_deployment/decision_node.py` dosyası, laboratuvar testlerimiz esnasında anlık kritik kanıt kaydetme mekanizmasının entegrasyonu için modifiye edilmiştir. 
+
+**Not:** YOLOv8 TensorRT çıkarım işlemi (inference) takım arkadaşım Gizem'in geliştirdiği `inference_node.py` üzerinden yapılmaktadır. Bu çalışmada modifiye edilen ve paylaşılan bileşen, yalnızca `/fused/output_v2` verisini yorumlayan `decision_node.py` karar düğümüdür.
 
 ROS2 donanım pipeline'ının tamamını incelemek için kendisinin orijinal reposunu ziyaret edebilirsiniz:
 🔗 **[Gizem's Edge AI Pipeline Repository](https://github.com/gizemezer/jetson-edge-ai-pipeline)**
@@ -90,7 +92,7 @@ ROS2 donanım pipeline'ının tamamını incelemek için kendisinin orijinal rep
 ---
 
 ## 🚀 Gelecek Adımlar (Next Steps)
-Projenin yapay zeka araştırma, model eğitim, uç cihaz donanım dağıtımı ve sensör füzyonu saha testleri **başarıyla tamamlanmış ve sonuçlandırılmıştır.**
+Projenin yapay zeka araştırma, model eğitim, uç cihaz donanım dağıtımı ve sensör füzyonu laboratuvar testleri **başarıyla tamamlanmış ve sonuçlandırılmıştır.**
 * **Akademik Raporlama (Bitirme Tezi):** Projenin tek kalan adımı, jüri sunumu için *"Abstract - Introduction - Methodology - Results - Discussions - Conclusions"* formatında bitirme tezinin kaleme alınmasıdır.
 
 ---
